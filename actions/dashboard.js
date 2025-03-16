@@ -1,7 +1,8 @@
 "use server";
 
-
+import aj from "@/lib/arcjet";
 import { db } from "@/lib/prisma";
+import { request } from "@arcjet/next";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
@@ -16,12 +17,70 @@ const serializeTransaction = (obj) => {
   return serialized;
 };
 
+export async function getUserAccounts() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const accounts = await db.account.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: {
+            transactions: true,
+          },
+        },
+      },
+    });
+
+    // Serialize accounts before sending to client
+    const serializedAccounts = accounts.map(serializeTransaction);
+
+    return serializedAccounts;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
 export async function createAccount(data) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
+    // Get request data for ArcJet
+    const req = await request();
+
+    // Check rate limit
+    const decision = await aj.protect(req, {
+      userId,
+      requested: 1, // Specify how many tokens to consume
+    });
+
+    if (decision.isDenied()) {
+      if (decision.reason.isRateLimit()) {
+        const { remaining, reset } = decision.reason;
+        console.error({
+          code: "RATE_LIMIT_EXCEEDED",
+          details: {
+            remaining,
+            resetInSeconds: reset,
+          },
+        });
+
+        throw new Error("Too many requests. Please try again later.");
+      }
+
+      throw new Error("Request blocked");
+    }
 
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
@@ -74,7 +133,8 @@ export async function createAccount(data) {
     throw new Error(error.message);
   }
 }
-export async function getUserAccounts() {
+
+export async function getDashboardData() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -86,25 +146,11 @@ export async function getUserAccounts() {
     throw new Error("User not found");
   }
 
-  try {
-    const accounts = await db.account.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: {
-            transactions: true,
-          },
-        },
-      },
-    });
+  // Get all user transactions
+  const transactions = await db.transaction.findMany({
+    where: { userId: user.id },
+    orderBy: { date: "desc" },
+  });
 
-    // Serialize accounts before sending to client
-    const serializedAccounts = accounts.map(serializeTransaction);
-
-    return serializedAccounts;
-  } catch (error) {
-    console.error(error.message);
-  }
+  return transactions.map(serializeTransaction);
 }
-
