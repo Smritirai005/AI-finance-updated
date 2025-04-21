@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "NEXT_IGNORE_TS_CONFIG=true next dev",
     "email": "email dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "next lint"
   },
   "dependencies": {
