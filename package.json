@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NEXT_IGNORE_TS_CONFIG=true next dev",
     "email": "email dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
@@ -54,7 +54,7 @@
     "@eslint/eslintrc": "^3",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",
-    "eslint": "^9",
+    "eslint": "^9.25.1",
     "eslint-config-next": "15.1.7",
     "react-email": "3.0.7"
   }
