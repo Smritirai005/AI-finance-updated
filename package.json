@@ -58,7 +58,6 @@
     "@types/react": "19.0.10",
     "eslint": "^9.25.1",
     "eslint-config-next": "15.1.7",
-    "inngest": "^3.35.1",
     "react-email": "^4.0.7"
   }
 }
