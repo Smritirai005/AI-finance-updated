@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { featuresData, howItWorksData, statsData, testimonialsData } from "@/data/landing";
-import HeroSection from "@/components/ui/HeroSection";
+import HeroSection from "@/components/ui/heroSection";
 import Link from "next/link";
 
 
