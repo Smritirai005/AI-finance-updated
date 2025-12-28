@@ -143,4 +143,19 @@
   .hero-image.scrolled {
     transform: rotateX(0deg) scale(1) translateY(40px);
   }
+
+  /* Gradient animation for fealth text */
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
 }

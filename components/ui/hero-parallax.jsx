@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring } from "motion/react";
 
 export const HeroParallax = ({
@@ -29,6 +30,35 @@ export const HeroParallax = ({
     <div
       ref={ref}
       className="h-[300vh] py-40 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]">
+      {/* Colorful Dot Pattern Background */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.3) 1px, transparent 0),
+                            radial-gradient(circle at 20px 20px, rgba(147, 51, 234, 0.3) 1px, transparent 0),
+                            radial-gradient(circle at 38px 38px, rgba(236, 72, 153, 0.3) 1px, transparent 0),
+                            radial-gradient(circle at 56px 56px, rgba(34, 197, 94, 0.3) 1px, transparent 0),
+                            radial-gradient(circle at 74px 74px, rgba(251, 191, 36, 0.3) 1px, transparent 0)`,
+            backgroundSize: '80px 80px',
+            backgroundPosition: '0 0, 20px 20px, 40px 40px, 60px 60px, 80px 80px',
+            opacity: 0.6,
+          }}
+        />
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 10px 10px, rgba(168, 85, 247, 0.2) 1px, transparent 0),
+                            radial-gradient(circle at 30px 30px, rgba(59, 130, 246, 0.2) 1px, transparent 0),
+                            radial-gradient(circle at 50px 50px, rgba(236, 72, 153, 0.2) 1px, transparent 0),
+                            radial-gradient(circle at 70px 70px, rgba(34, 197, 94, 0.2) 1px, transparent 0)`,
+            backgroundSize: '100px 100px',
+            backgroundPosition: '50px 50px, 70px 70px, 90px 90px, 110px 110px',
+            opacity: 0.4,
+          }}
+        />
+      </div>
+      
       {/* Remove this self-referential HeroParallax component */}
       <motion.div
         style={{
@@ -37,7 +67,7 @@ export const HeroParallax = ({
           translateY,
           opacity,
         }}
-        className="">
+        className="relative z-10">
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
           {firstRow.map((product) => (
             <ProductCard product={product} translate={translateX} key={product.title} />
@@ -89,12 +119,14 @@ export const ProductCard = ({
       key={product.title}
       className="group/product h-96 w-[30rem] relative shrink-0">
       <a href={product.link} className="block group-hover/product:shadow-2xl">
-        <img
+        <Image
           src={product.thumbnail}
-          height="600"
-          width="600"
-          className="object-cover object-left-top absolute h-full w-full inset-0"
-          alt={product.title} />
+          height={600}
+          width={600}
+          className="object-cover object-left-top absolute h-full w-full inset-0 rounded-lg"
+          alt={product.title}
+          unoptimized
+        />
       </a>
       <div
         className="absolute inset-0 h-full w-full opacity-0 group-hover/product:opacity-80 bg-black pointer-events-none"></div>
